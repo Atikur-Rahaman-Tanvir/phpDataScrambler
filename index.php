@@ -11,12 +11,55 @@ if ('key' == $task) {
     $key_original = str_split($key);
     shuffle($key_original);
     $key = join('', $key_original);
+}else if(isset($_POST['key']) && $_POST['key'] != ''){
+    $generated_key = $_POST['key'];
 }
 
+$endoce_element = '';
+if('encode' == $task)
+{
+    $original_data = $_POST['data'];
+    if($original_data != '')
+    {
+        $endoce_element = encode($original_data, $generated_key);
+    }
+}
+
+//data endoce function
+
+function encode($original_data, $generated_key)
+{
+    // return $generated_key;
+    $key = 'abcdefghijklmnopqrstuvwxyz1234567890';
+    // $key = '8vaks4ly91w0ux76532zpbnhimjdotqfecrg';
+    // $generated_key = 'abcdefghijklmnopqrstuvwxyz1234567890';
+    $encoded_data = '';
+    $original_data_length = strlen($original_data);
+    for($i=0; $i<=$original_data_length-1; $i++)
+    {
+        $current_char = $original_data[$i];
+        $position     = strpos($key, $current_char);
+
+        if($position !== false)
+        {
+            $encoded_data .= $generated_key[$position];
+        }else{
+            $encoded_data .= $current_char;
+        }
+
+    }
+    
+    return $encoded_data;
+
+}
+
+//generate key function
 function display($key)
 {
     printf($key);
 }
+
+
 
 ?>
 
@@ -40,10 +83,10 @@ function display($key)
                     <a href="/index.php?task=decode" class="m-1">Decode</a>
                     <a href="/index.php?task=key" class="m-1">Key Generate</a>
                 </div>
-                <form>
+                <form method="POST" action="index.php" >
                     <div class="form-group m-2">
                         <label for="exampleInputEmail1">Key</label>
-                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Key" value="<?php display($key) ?>"> 
+                        <input type="text" name="key" class="form-control" placeholder="Enter Key" value="<?php display($key) ?>"> 
                     </div>
                         <div class="form-group m-2">
                             <label for="exampleInputPassword1">Data</label>
@@ -51,7 +94,7 @@ function display($key)
                         </div>
                         <div class="form-group m-2">
                             <label for="exampleInputPassword1">Result</label>
-                            <textarea name="result" id="" class="form-control"></textarea>
+                            <textarea name="result" id="" class="form-control"><?php echo $endoce_element; ?></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
